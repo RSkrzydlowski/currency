@@ -5,7 +5,8 @@ class MainPage extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			value: []
+			value: [],
+			currency: ''
 		};
 		this.urlB = 'http://api.nbp.pl/api/exchangerates/tables/B/';
 
@@ -13,38 +14,50 @@ class MainPage extends React.Component {
 	}
 
 	init = () => {
-		const value = [];
+		let value = [];
 		this.generateTable('A', value);
 		this.generateTable('B', value);
-		console.log(value);
-		// this.setState((prevState) => ({}));
+		setTimeout(() => {
+			this.setState({ value: value });
+		}, 1000);
 	};
 
 	generateTable = (letter, value) => {
 		const url = `http://api.nbp.pl/api/exchangerates/tables/${letter}/`;
+		let currency;
 		fetch(url)
 			.then((res) => res.json())
 			.then((out) => {
-				// console.log(out);
 				for (let i = 0; i < out[0].rates.length; i++) {
-					value.push(out[0].rates[i].currency);
-					// this.setState((prevState) ;value.push(out[0].rates[i].currency)
-					// new Information(out[0].rates[i].code, tableInformation, letter);
+					currency = out[0].rates[i].currency.toLowerCase();
+					value.push(currency);
 				}
-				// console.log(out[0].rates[0].currency);
-				// console.log(value);
 			})
 			.catch((err) => {
 				throw err;
 			});
 	};
 
+	componentDidUpdate = () => {
+		let value = this.state.value;
+		const currencyName = this.state.currency;
+		value = value.filter((name) => name.toLowerCase().includes(currencyName));
+		if (value.length > 5) {
+			value = value.slice(0, 5);
+		}
+	};
+
+	onChanged = (e) => {
+		this.setState({
+			currency: e.target.value
+		});
+	};
+
 	render() {
-		console.log('FSD');
-		console.log(this.state.value);
 		return (
 			<div>
 				<div className="header">Currency</div>
+				<input onChange={this.onChanged} value={this.state.currency} />
 			</div>
 		);
 	}
