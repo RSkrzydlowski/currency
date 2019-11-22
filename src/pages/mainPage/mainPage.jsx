@@ -114,7 +114,8 @@ class MainPage extends React.Component {
 	render() {
 		return (
 			<div>
-				<div className="header">Currency</div>
+				<div className="header">Waluta</div>
+				<p>Wprowadź walutę</p>
 				<input onChange={this.onChanged} value={this.state.currency} />
 				<button onClick={this.check}>sprawdź</button>
 				{this.state.flag && (
