@@ -12,8 +12,6 @@ class MainPage extends React.Component {
 			data: [],
 			flag: false
 		};
-		this.urlB = 'http://api.nbp.pl/api/exchangerates/tables/B/';
-		this.index = null;
 		this.init();
 	}
 
@@ -94,18 +92,14 @@ class MainPage extends React.Component {
 			.indexOf(currencyName);
 
 		if (index != -1) {
-			const effectiveDate = [];
 			const date = this.generateDate();
 			const currency = this.state.value[index];
 			const url = `http://api.nbp.pl/api/exchangerates/rates/${currency.table}/${currency.currencyCode}/${date.beforeDateText}/${date.startDateText}/`;
 			fetch(url)
 				.then((res) => res.json())
 				.then((out) => {
-					data = out.rates;
-					code = out.code;
 					this.setState({
-						date: out.rates,
-						data: effectiveDate,
+						data: out.rates,
 						flag: true
 					});
 				})
@@ -127,7 +121,7 @@ class MainPage extends React.Component {
 					<LineChart
 						width={1500}
 						height={800}
-						data={this.state.date}
+						data={this.state.data}
 						margin={{
 							top: 5,
 							right: 30,
