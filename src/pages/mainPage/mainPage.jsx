@@ -1,15 +1,17 @@
 import React from 'react';
 import './mainPage.scss';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 class MainPage extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			value: [],
-			currency: ''
+			currency: '',
+			date: [],
+			data: [],
+			flag: false
 		};
-		this.urlB = 'http://api.nbp.pl/api/exchangerates/tables/B/';
-		this.index = null;
 		this.init();
 	}
 
@@ -96,7 +98,10 @@ class MainPage extends React.Component {
 			fetch(url)
 				.then((res) => res.json())
 				.then((out) => {
-					console.log(out);
+					this.setState({
+						data: out.rates,
+						flag: true
+					});
 				})
 				.catch((err) => {
 					throw err;
@@ -112,6 +117,26 @@ class MainPage extends React.Component {
 				<div className="header">Currency</div>
 				<input onChange={this.onChanged} value={this.state.currency} />
 				<button onClick={this.check}>sprawdź</button>
+				{this.state.flag && (
+					<LineChart
+						width={1500}
+						height={800}
+						data={this.state.data}
+						margin={{
+							top: 5,
+							right: 30,
+							left: 20,
+							bottom: 5
+						}}
+					>
+						<CartesianGrid strokeDasharray="3 3" />
+						<XAxis dataKey="effectiveDate" />
+						<YAxis type="number" domain={[ 'dataMin - 0.05', 'dataMax + 0.05' ]} />
+						<Tooltip />
+						<Legend verticalAlign="top" height={36} />
+						<Line name="Wartość" type="monotone" dataKey="mid" stroke="#8884d8" activeDot={{ r: 8 }} />
+					</LineChart>
+				)}
 			</div>
 		);
 	}
