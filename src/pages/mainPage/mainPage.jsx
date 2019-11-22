@@ -2,51 +2,6 @@ import React from 'react';
 import './mainPage.scss';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
-let code;
-let data = [
-	{
-		name: 'Page A',
-		uv: 4000,
-		pv: 2400,
-		amt: 2400
-	},
-	{
-		name: 'Page B',
-		uv: 3000,
-		pv: 1398,
-		amt: 2210
-	},
-	{
-		name: 'Page C',
-		uv: 2000,
-		pv: 9800,
-		amt: 2290
-	},
-	{
-		name: 'Page D',
-		uv: 2780,
-		pv: 3908,
-		amt: 2000
-	},
-	{
-		name: 'Page E',
-		uv: 1890,
-		pv: 4800,
-		amt: 2181
-	},
-	{
-		name: 'Page F',
-		uv: 2390,
-		pv: 3800,
-		amt: 2500
-	},
-	{
-		name: 'Page G',
-		uv: 3490,
-		pv: 4300,
-		amt: 2100
-	}
-];
 class MainPage extends React.Component {
 	constructor(props) {
 		super(props);
@@ -146,18 +101,10 @@ class MainPage extends React.Component {
 			fetch(url)
 				.then((res) => res.json())
 				.then((out) => {
-					console.log('BLA');
-					console.log(out);
-					console.log(out.rates.effectiveDate);
-					for (let i = 0; i < out.rates.length; i++) {
-						effectiveDate.push(out.rates[i].effectiveDate);
-					}
-					console.log('TDSDFGDFFFD');
-					console.log(effectiveDate);
 					data = out.rates;
 					code = out.code;
 					this.setState({
-						date: out,
+						date: out.rates,
 						data: effectiveDate,
 						flag: true
 					});
@@ -171,8 +118,6 @@ class MainPage extends React.Component {
 	};
 
 	render() {
-		console.log('RATES');
-		console.log(data);
 		return (
 			<div>
 				<div className="header">Currency</div>
@@ -182,7 +127,7 @@ class MainPage extends React.Component {
 					<LineChart
 						width={1500}
 						height={800}
-						data={data}
+						data={this.state.date}
 						margin={{
 							top: 5,
 							right: 30,
