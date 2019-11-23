@@ -1,0 +1,12 @@
+.search-paragraph-button {
+	background-color: #fff;
+	border: 0px;
+
+	&:hover {
+		background-color: gray;
+	}
+
+	&:focus {
+		outline: none;
+	}
+}
