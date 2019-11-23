@@ -1,7 +1,10 @@
 import React from 'react';
 import './mainPage.scss';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import SearchPanel from '../../containers/searchPanel';
 
+let value = [];
+let id = 0;
 class MainPage extends React.Component {
 	constructor(props) {
 		super(props);
@@ -12,6 +15,7 @@ class MainPage extends React.Component {
 			data: [],
 			flag: false
 		};
+
 		this.init();
 	}
 
@@ -34,6 +38,7 @@ class MainPage extends React.Component {
 					currencyName = out[0].rates[i].currency.toLowerCase();
 					currencyCode = out[0].rates[i].code;
 					const currency = {
+						id: id++,
 						currencyName: currencyName,
 						currencyCode: currencyCode,
 						table: letter
@@ -47,7 +52,7 @@ class MainPage extends React.Component {
 	};
 
 	componentDidUpdate = () => {
-		let value = this.state.value;
+		value = this.state.value;
 		const currencyName = this.state.currency;
 		value = value.filter((name) => name.currencyName.toLowerCase().includes(currencyName));
 		if (value.length > 5) {
@@ -111,12 +116,18 @@ class MainPage extends React.Component {
 		}
 	};
 
+	helping = () => {
+		console.log('TEST');
+	};
+
 	render() {
+		console.log(value);
 		return (
 			<div>
 				<div className="header">Waluta</div>
 				<p>Wprowadź walutę</p>
 				<input onChange={this.onChanged} value={this.state.currency} />
+				<SearchPanel data={value} helper={this.helping} />
 				<button onClick={this.check}>sprawdź</button>
 				{this.state.flag && (
 					<LineChart

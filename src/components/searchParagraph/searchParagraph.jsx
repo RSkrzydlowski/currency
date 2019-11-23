@@ -1,7 +1,7 @@
 import React from 'react';
 
 const SearchParagraph = (props) => {
-	return <p>{props.name}</p>;
+	return <button onClick={props.action}>{props.name}</button>;
 };
 
 export default SearchParagraph;
