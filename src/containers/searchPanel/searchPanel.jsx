@@ -4,10 +4,10 @@ import './searchPanel.scss';
 import SearchParagraph from '../../components/searchParagraph';
 
 const SearchPanel = (props) => {
-	const data = props.data;
+	const value = props.value;
 
-	const Items = data.map((data) => (
-		<SearchParagraph key={data.id} action={props.helper} data={data.data} name={data.currencyName} />
+	const Items = value.map((value) => (
+		<SearchParagraph key={value.id} action={props.helper} value={value} name={value.currencyName} />
 	));
 
 	return <div className="search-panel-block">{Items}</div>;

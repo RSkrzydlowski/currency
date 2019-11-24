@@ -2,6 +2,7 @@ import React from 'react';
 import './mainPage.scss';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import SearchPanel from '../../containers/searchPanel';
+import { runInThisContext } from 'vm';
 
 let value = [];
 let id = 0;
@@ -9,6 +10,7 @@ class MainPage extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			displayValue: [],
 			value: [],
 			currency: '',
 			date: [],
@@ -17,6 +19,7 @@ class MainPage extends React.Component {
 		};
 
 		this.init();
+		this.helping = this.helping.bind(this);
 	}
 
 	init = () => {
@@ -51,19 +54,13 @@ class MainPage extends React.Component {
 			});
 	};
 
-	componentDidUpdate = () => {
-		value = this.state.value;
-		const currencyName = this.state.currency;
-		value = value.filter((name) => name.currencyName.toLowerCase().includes(currencyName));
-		if (value.length > 5) {
-			value = value.slice(0, 5);
-		}
-	};
+	componentDidUpdate = () => {};
 
 	onChanged = (e) => {
 		this.setState({
 			currency: e.target.value
 		});
+		const wartosc = this.state.currency;
 	};
 
 	generateDate = () => {
@@ -116,18 +113,38 @@ class MainPage extends React.Component {
 		}
 	};
 
-	helping = () => {
-		console.log('TEST');
+	helping = (currencyName) => {
+		this.setState({
+			currency: currencyName
+		});
+		value = [];
+	};
+
+	check = () => {
+		const currencyName = this.state.currency;
+		value = [];
+		console.log(currencyName.trim().length);
+		if (value != null && currencyName.trim().length > 0) {
+			console.log('wchodzę');
+			value = this.state.value;
+
+			value = value.filter((name) => name.currencyName.toLowerCase().includes(currencyName.trim()));
+			if (value.length === 1 && value[0].currencyName === currencyName) {
+				value = [];
+			} else if (value.length > 5) {
+				value = value.slice(0, 5);
+			}
+		}
 	};
 
 	render() {
-		console.log(value);
+		this.check();
 		return (
 			<div>
 				<div className="header">Waluta</div>
 				<p>Wprowadź walutę</p>
 				<input onChange={this.onChanged} value={this.state.currency} />
-				<SearchPanel data={value} helper={this.helping} />
+				<SearchPanel value={value} helper={this.helping} />
 				<button onClick={this.check}>sprawdź</button>
 				{this.state.flag && (
 					<LineChart
