@@ -1,18 +1,24 @@
 import React from 'react';
 import './mainPage.scss';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import SearchPanel from '../../containers/searchPanel';
 
+let value = [];
+let id = 0;
 class MainPage extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			displayValue: [],
 			value: [],
 			currency: '',
 			date: [],
 			data: [],
 			flag: false
 		};
+
 		this.init();
+		this.helping = this.helping.bind(this);
 	}
 
 	init = () => {
@@ -34,6 +40,7 @@ class MainPage extends React.Component {
 					currencyName = out[0].rates[i].currency.toLowerCase();
 					currencyCode = out[0].rates[i].code;
 					const currency = {
+						id: id++,
 						currencyName: currencyName,
 						currencyCode: currencyCode,
 						table: letter
@@ -44,15 +51,6 @@ class MainPage extends React.Component {
 			.catch((err) => {
 				throw err;
 			});
-	};
-
-	componentDidUpdate = () => {
-		let value = this.state.value;
-		const currencyName = this.state.currency;
-		value = value.filter((name) => name.currencyName.toLowerCase().includes(currencyName));
-		if (value.length > 5) {
-			value = value.slice(0, 5);
-		}
 	};
 
 	onChanged = (e) => {
@@ -83,14 +81,14 @@ class MainPage extends React.Component {
 		};
 	};
 
-	check = () => {
+	send = () => {
 		const currencyName = this.state.currency;
 		const index = this.state.value
 			.map((currency) => {
 				return currency.currencyName;
 			})
 			.indexOf(currencyName);
-
+		console.log('dfasd');
 		if (index != -1) {
 			const date = this.generateDate();
 			const currency = this.state.value[index];
@@ -111,12 +109,36 @@ class MainPage extends React.Component {
 		}
 	};
 
+	helping = (currencyName) => {
+		this.setState({
+			currency: currencyName
+		});
+		value = [];
+	};
+
+	check = () => {
+		const currencyName = this.state.currency;
+		value = [];
+		if (value != null && currencyName.trim().length > 0) {
+			value = this.state.value;
+			value = value.filter((name) => name.currencyName.toLowerCase().includes(currencyName.trim()));
+			if (value.length === 1 && value[0].currencyName === currencyName) {
+				value = [];
+			} else if (value.length > 5) {
+				value = value.slice(0, 5);
+			}
+		}
+	};
+
 	render() {
+		this.check();
 		return (
 			<div>
-				<div className="header">Currency</div>
+				<div className="header">Waluta</div>
+				<p>Wprowadź walutę</p>
 				<input onChange={this.onChanged} value={this.state.currency} />
-				<button onClick={this.check}>sprawdź</button>
+				<SearchPanel value={value} helper={this.helping} />
+				<button onClick={this.send}>sprawdź</button>
 				{this.state.flag && (
 					<LineChart
 						width={1500}
