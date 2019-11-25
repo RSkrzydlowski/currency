@@ -2,6 +2,7 @@ import React from 'react';
 import './mainPage.scss';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import SearchPanel from '../../containers/searchPanel';
+import DisplayPanel from '../../components/displayPanel';
 
 let value = [];
 let id = 0;
@@ -88,7 +89,7 @@ class MainPage extends React.Component {
 				return currency.currencyName;
 			})
 			.indexOf(currencyName);
-		console.log('dfasd');
+
 		if (index != -1) {
 			const date = this.generateDate();
 			const currency = this.state.value[index];
@@ -132,6 +133,10 @@ class MainPage extends React.Component {
 
 	render() {
 		this.check();
+		if (this.state.data[this.state.data.length - 1]) {
+			console.log(this.state.data[this.state.data.length - 1].mid);
+		}
+
 		return (
 			<div>
 				<div className="header">Waluta</div>
@@ -139,7 +144,8 @@ class MainPage extends React.Component {
 				<input onChange={this.onChanged} value={this.state.currency} />
 				<SearchPanel value={value} helper={this.helping} />
 				<button onClick={this.send}>sprawdź</button>
-				{this.state.flag && (
+
+				{this.state.flag && <DisplayPanel name="dasdas" value="dfads" /> && (
 					<LineChart
 						width={1500}
 						height={800}
