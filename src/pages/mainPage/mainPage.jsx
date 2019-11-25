@@ -1,6 +1,6 @@
 import React from 'react';
 import './mainPage.scss';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import CurrencyInformation from '../../containers/currencyInformation';
 import SearchPanel from '../../containers/searchPanel';
 
 let value = [];
@@ -9,12 +9,15 @@ class MainPage extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			currencyCode: '',
+			currencyName: '',
 			displayValue: [],
 			value: [],
 			currency: '',
 			date: [],
 			data: [],
-			flag: false
+			flag: false,
+			wrongCurrency: false
 		};
 
 		this.init();
@@ -82,13 +85,13 @@ class MainPage extends React.Component {
 	};
 
 	send = () => {
-		const currencyName = this.state.currency;
+		const currencyName = this.state.currency.trim();
 		const index = this.state.value
 			.map((currency) => {
 				return currency.currencyName;
 			})
 			.indexOf(currencyName);
-		console.log('dfasd');
+
 		if (index != -1) {
 			const date = this.generateDate();
 			const currency = this.state.value[index];
@@ -97,15 +100,20 @@ class MainPage extends React.Component {
 				.then((res) => res.json())
 				.then((out) => {
 					this.setState({
+						currencyCode: currency.currencyCode,
+						currencyName: currencyName,
 						data: out.rates,
-						flag: true
+						flag: true,
+						wrongCurrency: false
 					});
 				})
 				.catch((err) => {
 					throw err;
 				});
 		} else {
-			console.log('Podana waluta nie istnieje');
+			this.setState({
+				wrongCurrency: true
+			});
 		}
 	};
 
@@ -132,32 +140,41 @@ class MainPage extends React.Component {
 
 	render() {
 		this.check();
+		let currencyValue, lastCurrencyValue;
+		let sign, style;
+		if (this.state.data[this.state.data.length - 1]) {
+			currencyValue = this.state.data[this.state.data.length - 1].mid;
+			lastCurrencyValue = this.state.data[this.state.data.length - 2].mid;
+			if (currencyValue > lastCurrencyValue) {
+				sign = <i className="fas fa-arrow-up" />;
+				style = 'green';
+			} else if (currencyValue < lastCurrencyValue) {
+				sign = <i className="fas fa-arrow-down" />;
+				style = 'red';
+			} else {
+				sign = '-';
+				style = 'gray';
+			}
+		}
 		return (
 			<div>
 				<div className="header">Waluta</div>
 				<p>Wprowadź walutę</p>
+				{this.state.wrongCurrency && <p>PODANA WARTOŚĆ JEST NIEPRAWIDŁOWA</p>}
 				<input onChange={this.onChanged} value={this.state.currency} />
 				<SearchPanel value={value} helper={this.helping} />
 				<button onClick={this.send}>sprawdź</button>
 				{this.state.flag && (
-					<LineChart
-						width={1500}
-						height={800}
+					<CurrencyInformation
+						arrowStyle={style}
+						currencyCode={this.state.currencyCode}
+						currencySign={sign}
 						data={this.state.data}
-						margin={{
-							top: 5,
-							right: 30,
-							left: 20,
-							bottom: 5
-						}}
-					>
-						<CartesianGrid strokeDasharray="3 3" />
-						<XAxis dataKey="effectiveDate" />
-						<YAxis type="number" domain={[ 'dataMin - 0.05', 'dataMax + 0.05' ]} />
-						<Tooltip />
-						<Legend verticalAlign="top" height={36} />
-						<Line name="Wartość" type="monotone" dataKey="mid" stroke="#8884d8" activeDot={{ r: 8 }} />
-					</LineChart>
+						effectiveDate="effectiveDate"
+						mid="mid"
+						currencyName={this.state.currencyName}
+						currencyValue={currencyValue}
+					/>
 				)}
 			</div>
 		);
