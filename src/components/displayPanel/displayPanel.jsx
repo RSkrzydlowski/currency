@@ -3,7 +3,7 @@ import './displayPanel.scss';
 
 const DisplayPanel = (props) => {
 	return (
-		<div className="display-panel-block" onClick={props.currency}>
+		<div className="display-panel-block">
 			<p>{props.name}</p>
 			<div className="value-block">
 				<p className={props.arrow}>{props.sign}</p>

@@ -16,7 +16,8 @@ class MainPage extends React.Component {
 			currency: '',
 			date: [],
 			data: [],
-			flag: false
+			flag: false,
+			wrongCurrency: false
 		};
 
 		this.init();
@@ -102,14 +103,17 @@ class MainPage extends React.Component {
 						currencyCode: currency.currencyCode,
 						currencyName: currencyName,
 						data: out.rates,
-						flag: true
+						flag: true,
+						wrongCurrency: false
 					});
 				})
 				.catch((err) => {
 					throw err;
 				});
 		} else {
-			console.log('Podana waluta nie istnieje');
+			this.setState({
+				wrongCurrency: true
+			});
 		}
 	};
 
@@ -136,14 +140,11 @@ class MainPage extends React.Component {
 
 	render() {
 		this.check();
-		console.log(this.state.currencyCode);
 		let currencyValue, lastCurrencyValue;
-		let sign, style, difference;
+		let sign, style;
 		if (this.state.data[this.state.data.length - 1]) {
-			console.log(this.state.data[this.state.data.length - 1].mid);
 			currencyValue = this.state.data[this.state.data.length - 1].mid;
 			lastCurrencyValue = this.state.data[this.state.data.length - 2].mid;
-			console.log(`${currencyValue} : ${this.state.data[this.state.data.length - 2].mid}`);
 			if (currencyValue > lastCurrencyValue) {
 				sign = <i className="fas fa-arrow-up" />;
 				style = 'green';
@@ -155,12 +156,11 @@ class MainPage extends React.Component {
 				style = 'gray';
 			}
 		}
-
-		// const sign2 = <i className="fas fa-arrow-down" />;
 		return (
 			<div>
 				<div className="header">Waluta</div>
 				<p>Wprowadź walutę</p>
+				{this.state.wrongCurrency && <p>PODANA WARTOŚĆ JEST NIEPRAWIDŁOWA</p>}
 				<input onChange={this.onChanged} value={this.state.currency} />
 				<SearchPanel value={value} helper={this.helping} />
 				<button onClick={this.send}>sprawdź</button>
