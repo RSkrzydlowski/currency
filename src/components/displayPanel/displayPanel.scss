@@ -1,5 +1,23 @@
 .display-panel-block {
-	background-color: blue;
+	background-color: #ececec;
 	height: 100px;
 	width: 100px;
+}
+
+.value-block {
+	padding: 0px;
+	display: flex;
+	flex-direction: row;
+}
+
+.green {
+	color: green;
+}
+
+.red {
+	color: red;
+}
+
+.gray {
+	color: gray;
 }

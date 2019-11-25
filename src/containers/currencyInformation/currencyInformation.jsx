@@ -6,7 +6,14 @@ import DisplayPanel from '../../components/displayPanel';
 const CurrencyInformation = (props) => {
 	return (
 		<div>
-			<DisplayPanel name={props.currencyName} value={props.currencyValue} />
+			<DisplayPanel
+				name={props.currencyName}
+				value={props.currencyValue}
+				sign={props.currencySign}
+				code={props.currencyCode}
+				arrow={props.arrowStyle}
+				currency={props.currencyData}
+			/>
 			<LineChart
 				width={1500}
 				height={800}

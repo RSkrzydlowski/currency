@@ -1,9 +1,7 @@
 import React from 'react';
 import './mainPage.scss';
 import CurrencyInformation from '../../containers/currencyInformation';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import SearchPanel from '../../containers/searchPanel';
-import DisplayPanel from '../../components/displayPanel';
 
 let value = [];
 let id = 0;
@@ -11,6 +9,8 @@ class MainPage extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			currencyCode: '',
+			currencyName: '',
 			displayValue: [],
 			value: [],
 			currency: '',
@@ -84,7 +84,7 @@ class MainPage extends React.Component {
 	};
 
 	send = () => {
-		const currencyName = this.state.currency;
+		const currencyName = this.state.currency.trim();
 		const index = this.state.value
 			.map((currency) => {
 				return currency.currencyName;
@@ -99,6 +99,8 @@ class MainPage extends React.Component {
 				.then((res) => res.json())
 				.then((out) => {
 					this.setState({
+						currencyCode: currency.currencyCode,
+						currencyName: currencyName,
 						data: out.rates,
 						flag: true
 					});
@@ -134,12 +136,27 @@ class MainPage extends React.Component {
 
 	render() {
 		this.check();
-		let currencyValue;
+		console.log(this.state.currencyCode);
+		let currencyValue, lastCurrencyValue;
+		let sign, style, difference;
 		if (this.state.data[this.state.data.length - 1]) {
 			console.log(this.state.data[this.state.data.length - 1].mid);
 			currencyValue = this.state.data[this.state.data.length - 1].mid;
+			lastCurrencyValue = this.state.data[this.state.data.length - 2].mid;
+			console.log(`${currencyValue} : ${this.state.data[this.state.data.length - 2].mid}`);
+			if (currencyValue > lastCurrencyValue) {
+				sign = <i className="fas fa-arrow-up" />;
+				style = 'green';
+			} else if (currencyValue < lastCurrencyValue) {
+				sign = <i className="fas fa-arrow-down" />;
+				style = 'red';
+			} else {
+				sign = '-';
+				style = 'gray';
+			}
 		}
 
+		// const sign2 = <i className="fas fa-arrow-down" />;
 		return (
 			<div>
 				<div className="header">Waluta</div>
@@ -149,10 +166,13 @@ class MainPage extends React.Component {
 				<button onClick={this.send}>sprawdź</button>
 				{this.state.flag && (
 					<CurrencyInformation
+						arrowStyle={style}
+						currencyCode={this.state.currencyCode}
+						currencySign={sign}
 						data={this.state.data}
 						effectiveDate="effectiveDate"
 						mid="mid"
-						currencyName={this.state.currency}
+						currencyName={this.state.currencyName}
 						currencyValue={currencyValue}
 					/>
 				)}
