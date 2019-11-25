@@ -2,7 +2,6 @@ import React from 'react';
 import './mainPage.scss';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import SearchPanel from '../../containers/searchPanel';
-import { runInThisContext } from 'vm';
 
 let value = [];
 let id = 0;
@@ -54,13 +53,10 @@ class MainPage extends React.Component {
 			});
 	};
 
-	componentDidUpdate = () => {};
-
 	onChanged = (e) => {
 		this.setState({
 			currency: e.target.value
 		});
-		const wartosc = this.state.currency;
 	};
 
 	generateDate = () => {
@@ -85,14 +81,14 @@ class MainPage extends React.Component {
 		};
 	};
 
-	check = () => {
+	send = () => {
 		const currencyName = this.state.currency;
 		const index = this.state.value
 			.map((currency) => {
 				return currency.currencyName;
 			})
 			.indexOf(currencyName);
-
+		console.log('dfasd');
 		if (index != -1) {
 			const date = this.generateDate();
 			const currency = this.state.value[index];
@@ -123,11 +119,8 @@ class MainPage extends React.Component {
 	check = () => {
 		const currencyName = this.state.currency;
 		value = [];
-		console.log(currencyName.trim().length);
 		if (value != null && currencyName.trim().length > 0) {
-			console.log('wchodzę');
 			value = this.state.value;
-
 			value = value.filter((name) => name.currencyName.toLowerCase().includes(currencyName.trim()));
 			if (value.length === 1 && value[0].currencyName === currencyName) {
 				value = [];
@@ -145,7 +138,7 @@ class MainPage extends React.Component {
 				<p>Wprowadź walutę</p>
 				<input onChange={this.onChanged} value={this.state.currency} />
 				<SearchPanel value={value} helper={this.helping} />
-				<button onClick={this.check}>sprawdź</button>
+				<button onClick={this.send}>sprawdź</button>
 				{this.state.flag && (
 					<LineChart
 						width={1500}
