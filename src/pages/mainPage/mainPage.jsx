@@ -1,5 +1,6 @@
 import React from 'react';
 import './mainPage.scss';
+import CurrencyInformation from '../../containers/currencyInformation';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import SearchPanel from '../../containers/searchPanel';
 import DisplayPanel from '../../components/displayPanel';
@@ -133,8 +134,10 @@ class MainPage extends React.Component {
 
 	render() {
 		this.check();
+		let currencyValue;
 		if (this.state.data[this.state.data.length - 1]) {
 			console.log(this.state.data[this.state.data.length - 1].mid);
+			currencyValue = this.state.data[this.state.data.length - 1].mid;
 		}
 
 		return (
@@ -144,26 +147,14 @@ class MainPage extends React.Component {
 				<input onChange={this.onChanged} value={this.state.currency} />
 				<SearchPanel value={value} helper={this.helping} />
 				<button onClick={this.send}>sprawdź</button>
-
-				{this.state.flag && <DisplayPanel name="dasdas" value="dfads" /> && (
-					<LineChart
-						width={1500}
-						height={800}
+				{this.state.flag && (
+					<CurrencyInformation
 						data={this.state.data}
-						margin={{
-							top: 5,
-							right: 30,
-							left: 20,
-							bottom: 5
-						}}
-					>
-						<CartesianGrid strokeDasharray="3 3" />
-						<XAxis dataKey="effectiveDate" />
-						<YAxis type="number" domain={[ 'dataMin - 0.05', 'dataMax + 0.05' ]} />
-						<Tooltip />
-						<Legend verticalAlign="top" height={36} />
-						<Line name="Wartość" type="monotone" dataKey="mid" stroke="#8884d8" activeDot={{ r: 8 }} />
-					</LineChart>
+						effectiveDate="effectiveDate"
+						mid="mid"
+						currencyName={this.state.currency}
+						currencyValue={currencyValue}
+					/>
 				)}
 			</div>
 		);
